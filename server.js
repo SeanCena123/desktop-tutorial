@@ -486,14 +486,14 @@ io.on('connection', function(socket) {
 	});
 
 	socket.on('signout', function(data) {
+		databaseurl = 'error';
+		socket.emit('signout', 'value');
+		// firebase.auth().signOut().then(() => {
+		// 	databaseurl = 'error';
 
-		firebase.auth().signOut().then(() => {
-			socket.emit('signout', 'value');
-			databaseurl = 'error';
-
-		}).catch((error) => {
-		  // An error happened.
-		});
+		// }).catch((error) => {
+		//   // An error happened.
+		// });
 	});
 
 

@@ -11,9 +11,14 @@ var userdata;
 var storeduser;
 
 async function login() {
-	var data = await [inputEmail.value, inputPassword.value]
-	await socket.emit('logindata', data)
-	event.preventDefault()
+	var currentuser = JSON.parse(sessionStorage.getItem("user"));
+	if (currentuser != null) {
+		console.log("user is alreayd logged in.";
+	} else {
+		var data = await [inputEmail.value, inputPassword.value]
+		await socket.emit('logindata', data)
+		event.preventDefault()
+	}
 }
 
 function signupredirect() {
@@ -26,10 +31,15 @@ function proceed() {
 }
 
 function signout() {
-	currentuser = sessionStorage.setItem("user", JSON.stringify(null));
-	console.log("currentuser is now "+currentuser);
-	checkuser();
-	socket.emit('signout', 'value')
+	var currentuser = JSON.parse(sessionStorage.getItem("user"));
+	if (currentuser != null) {
+		currentuser = sessionStorage.setItem("user", JSON.stringify(null));
+		console.log("currentuser is now "+currentuser);
+		checkuser();
+		socket.emit('signout', 'value')
+	} else {
+		console.log("user is already logged out.")
+	}
 }
 
 socket.on('loginsuccess', function(data) {
