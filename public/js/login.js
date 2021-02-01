@@ -13,7 +13,7 @@ var storeduser;
 async function login() {
 	var currentuser = JSON.parse(sessionStorage.getItem("user"));
 	if (currentuser != null) {
-		console.log("user is alreayd logged in.";
+		console.log("user is alreayd logged in.");
 	} else {
 		var data = await [inputEmail.value, inputPassword.value]
 		await socket.emit('logindata', data)
