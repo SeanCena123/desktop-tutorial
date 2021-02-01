@@ -1,0 +1,39 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Viola</title>
+
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/signin.css" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/ui/4.6.1/firebase-ui-auth.js"></script>
+  <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.6.1/firebase-ui-auth.css" />
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body class="text-center">
+
+  <form class="form-signin">
+    <img class="mb-4" src="img/bootstrap-solid.svg" alt="" width="72" height="72">
+    <h1 class="h3 mb-3 font-weight-normal">Viola Database</h1>
+    <label for="inputEmail" class="sr-only">Email address</label>
+    <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+<!--     <button class="btn btn-lg btn-primary btn-block" type="submit" onclick="login()">Sign in</button> -->
+    <div id="buttons">
+<!--       <button class="btn btn-lg btn-success btn-block" type="submit" onclick="signupredirect()">Sign Up</button>
+      <button id="loginid" class="btn btn-lg btn-success btn-block" type="submit" onclick="login()">Sign In</button> -->
+    </div>
+  </form>
+
+
+  <script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-analytics.js"></script>
+  <script src="js/login.js"></script>
+</body>
+</html>

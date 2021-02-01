@@ -1,0 +1,230 @@
+body { 
+    background-color: #add8e6; 
+}
+
+h1 { 
+    text-align: center; margin: 2.5em;
+}
+
+div.main {
+  width:90%;
+  overflow:hidden;
+  background-color: #2F5168;
+  margin: 2.5em auto;
+  height: auto;
+  border: 2px solid gray;
+  padding: 1.2em 0;
+  font-size: 1.5em;
+  font-family: "Agency FB";
+  color: #E4F6F8;
+}
+
+.pagination {
+   justify-content: center;
+}
+
+.footer {
+   justify-content: center; 
+}
+
+.pagination > li > a
+{
+    background-color: white;
+    color: #00CCA1;
+}
+
+.pagination > li > a:focus,
+.pagination > li > a:hover,
+.pagination > li > span:focus,
+.pagination > li > span:hover
+{
+    color: #00CCA1;
+    background-color: #eee;
+    border-color: #ddd;
+}
+
+.pagination > .active > a
+{
+    color: white;
+    background-color: #00CCA1 !Important;
+    border: solid 1px #00CCA1 !Important;
+}
+
+.pagination > .active > a:hover
+{
+    background-color: #00CCA1 !Important;
+    border: solid 1px #5A4181;
+}
+
+.nav-pills .nav-link.active, 
+.nav-pills .show>.nav-link{
+    background-color: : #00CCA1;
+    border: #00CCA1;
+}
+
+.css-selector {
+    background: linear-gradient(270deg, #ffffff, #dfdfdf);
+    background-size: 400% 400%;
+
+    -webkit-animation: AnimationName 16s ease infinite;
+    -moz-animation: AnimationName 16s ease infinite;
+    animation: AnimationName 16s ease infinite;
+}
+
+@-webkit-keyframes AnimationName {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@-moz-keyframes AnimationName {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@keyframes AnimationName {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
+.btn {
+    background: #00CCA1;
+    border: #00CCA1
+}
+
+.btn:hover {
+    background: #00B8A1;
+    border: #00B8A1
+}
+
+.btn:click {
+    background: #00B8A1;
+    border: #00B8A1
+}
+
+.btn:active {
+    background: #00B8A1;
+    border: #00B8A1
+}
+
+.btn:disable {
+    background: #00CCA1;
+    border: #00CCA1
+}
+
+.btn:focus {
+    background: #00B8A1;
+    border: #00B8A1
+}
+
+.btn:visited {
+  color: purple;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@500&display=swap');
+
+body {
+    background-color: #E7E9F5;
+    font-family: 'Heebo', sans-serif,
+}
+
+a {
+  color: white
+}
+
+.card {
+    width: 500px;
+    border: none;
+    border-radius: 20px
+}
+
+.form-control {
+    border-radius: 7px;
+    border: 1.5px solid #3bc49e
+}
+
+input.form-control:focus {
+    box-shadow: none;
+    border: 1.5px solid #E3E6ED;
+    background-color: #F7F8FD;
+    letter-spacing: 1px
+}
+
+.btn-primary:focus {
+    box-shadow: none,
+}
+
+.text {
+    font-size: 13px;
+    color: #9CA1A4
+}
+
+.price {
+    background: #3bc49e;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    width: 97px
+}
+
+.flex-row {
+    border: 1px solid #3bc49e;
+    border-radius: 10px;
+    margin: 0 1px 0
+}
+
+.flex-column p {
+    font-size: 14px
+}
+
+span.mb-2 {
+    font-size: 12px;
+    color: white
+}
+
+h5 span {
+    color: black
+}
+
+#scrollable {
+    transition: background 0.5s ease-in-out;
+}
+
+#scrollable:hover {
+    background: #D6FDEA;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 450px) {
+    .card {
+        display: flex;
+        justify-content: center;
+        text-align: center
+    }
+
+    .price {
+        border: none;
+        margin: 0 auto
+    }
+}
+
+.navbar-custom { 
+    background-color: #3bc49e; 
+} 
+
+.btn-custom { 
+    background-color: #3bc49e; 
+} 
+
+.white-class {
+    background-color: white;  
+}
+
+#manipulate {
+    position:absolute;
+    width:300px;
+    background: white;
+    bottom:0px;
+    right:25%;
+    left:50%;
+    margin-left:-150px;
+}

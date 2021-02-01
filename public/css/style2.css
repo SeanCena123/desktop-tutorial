@@ -1,0 +1,41 @@
+#videohover {
+    transition: background 0.5s ease-in-out;
+}
+
+#videohover:hover {
+    background: #D6FDEA;
+    cursor: pointer;
+}
+  
+.container {
+  width: 500px;
+  border: 5px solid rgb(111,41,97);
+  border-radius: .5em;
+  padding: 10px;
+}
+
+.navbar-custom { 
+    background-color: #3bc49e; 
+} 
+
+.btn-custom { 
+    background-color: #3bc49e; 
+} 
+
+.white-class {
+    background-color: white;  
+}
+
+#manipulate {
+    position:absolute;
+    width:300px;
+    background: white;
+    bottom:0px;
+    right:25%;
+    left:50%;
+    margin-left:-150px;
+}
+
+a {
+  color: white
+}
