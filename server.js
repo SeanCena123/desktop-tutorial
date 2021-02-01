@@ -348,24 +348,53 @@ io.on('connection', function(socket) {
     	socket.emit('arrayrec', datatest);
     });
 
-    socket.on('signupdata', function(data) {
+    socket.on('signupdata', async function(data) {
     	console.log(data[0]);
     	console.log(data[1]);
     	email = data[0];
     	password = data[1];
 
-		firebase.auth().createUserWithEmailAndPassword(email, password)
-		  .then((userCredential) => {
-		    // Signed in 
-		    var user = userCredential.user;
-		    // ...
-		  })
-		  .catch((error) => {
-		    var errorCode = error.code;
-		    var errorMessage = error.message;
-		    // ..
-		  });
+            var ref = await firebase.database().ref('Users/');
+			await ref.on('value', async function(snapshot) { 
+				var totalusers = await snapshot.numChildren(); 
 
+            	var userdirectory = await firebase.database().ref('Users/'+(totalusers+1));
+
+				firebase.auth().createUserWithEmailAndPassword(email, password).then((userCredential) => {
+				    // Signed in 
+				    var user = userCredential.user;
+				    console.log(user);
+
+				    userdirectory.child("apiKey").set(user.l);
+				    userdirectory.child("uid").set(user.uid);
+				    userdirectory.child("displayName").set(user.displayName);
+				    userdirectory.child("photoURL").set(user.photoURL);
+				    userdirectory.child("email").set(user.email);
+				    userdirectory.child("userpassword").set(password);
+				    userdirectory.child("emailVerified").set(user.emailVerified);
+				    userdirectory.child("phoneNumber").set(user.phoneNumber);
+				    userdirectory.child("isAnonymous").set(user.isAnonymous);
+				    userdirectory.child("creationTime").set(user.metadata.creationTime);
+				    userdirectory.child("lastSignInTime").set(user.metadata.lastSignInTime);
+				    userdirectory.child("accessToken").set(user.za);
+				    userdirectory.child("refreshToken").set(user.refreshToken);
+				    userdirectory.child("expirationTime").set(user.b.c);
+				    userdirectory.child("lastLoginAt").set(user.metadata.a);
+
+				    var data = [1, user]
+				    console.log("successfully created user.")
+				    socket.emit('signupdata', data);
+				    // ...
+
+				}).catch((error) => {
+				    var errorCode = error.code;
+				    var errorMessage = error.message;
+				    var data = [0, error.message];
+				    console.log(error.message);
+				    socket.emit('signupdata', data);
+				    // ..
+		  		});
+		  	})
     });
 
     var email;
@@ -374,33 +403,81 @@ io.on('connection', function(socket) {
     socket.on('logindata', async function(data) {
     	console.log(data[0]);
     	console.log(data[1]);
-    	email = data[0];
-    	password = data[1];
+    	useremailarr = data[0];
+    	userpasswordarr = data[1];
+
+    	var emailvalid = 0;
+    	var passwordvalid = 0;
+
+            var ref = await firebase.database().ref('Users/');
+			await ref.on('value', async function(snapshot) { 
+				var totalusers = await snapshot.numChildren(); 
+
+    				for (var i = 1; i < (totalusers+1); i++) {
+            			var useremail = await firebase.database().ref('Users/'+i+"/email");
+            			var userpassword = await firebase.database().ref('Users/'+i+"/userpassword");
+            			
+            			await useremail.on('value', async function(snapshot) { 
+							if (useremailarr == snapshot.val()) {
+								emailvalid = 1;
+								console.log("email is correct.")
+							} else {
+								emailvalid = 0;
+								console.log("email is incorrect.")
+							}
+						});
+
+            			await userpassword.on('value', async function(snapshot) { 
+							if (userpasswordarr == snapshot.val()) {
+								passwordvalid = 1;
+								console.log("password is correct.")
+							} else {
+								passwordvalid = 0;
+								console.log("password is incorrect.")
+							}
+						});
+
+            			if ((emailvalid == 1) && (passwordvalid == 1)) {
+            				console.log("user is able to sign in.")
+            				databaseurl = 'index'
+            				socket.emit('signInWithEmailAndPassword', 1);
+						} else {
+							console.log("user is unable to sign in.")
+							socket.emit('signInWithEmailAndPassword', 0);
+						}
+
+            				
+    				}
+
+			});
+
     
-		firebase.auth().signInWithEmailAndPassword(email, password)
-		  .then((userCredential) => {
-		    // Signed in 
-		    user = userCredential.user;
-		    databaseurl = 'index'
-		    console.log('successfully signed in.')
-		    socket.emit('signInWithEmailAndPassword', user);
+		// firebase.auth().signInWithEmailAndPassword(email, password)
+		//   .then((userCredential) => {
+		//     // Signed in 
+		//     user = userCredential.user;
+		//     databaseurl = 'index'
+		//     var data = [1, user];
+		//     console.log('successfully signed in.')
+		//     socket.emit('signInWithEmailAndPassword', data);
 
-			// firebase.auth().onAuthStateChanged(function(user) {
-			//   if (user) {
-			//     console.log("success");
-			//     socket.emit('loginsuccess', user);
-			//   } else {
-			//     console.log("failed");
-			//   }
-			// });
-		  })
-		  .catch((error) => {
-		    var errorCode = error.code;
-		    var errorMessage = error.message;
-		    console.log(error.code);
+		// 	// firebase.auth().onAuthStateChanged(function(user) {
+		// 	//   if (user) {
+		// 	//     console.log("success");
+		// 	//     socket.emit('loginsuccess', user);
+		// 	//   } else {
+		// 	//     console.log("failed");
+		// 	//   }
+		// 	// });
+		//   })
+		//   .catch((error) => {
+		//     var errorCode = error.code;
+		//     var errorMessage = error.message;
+		//     var data = [0, error.message];
+		//     socket.emit('signInWithEmailAndPassword', data);
 
-		    // ..
-		  });
+		//     // ..
+		//   });
     });
 
 	socket.on('userdata', function(data) {

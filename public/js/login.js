@@ -4,8 +4,6 @@ socket.emit('connections', 'value');
 	
 let inputEmail = document.getElementById("inputEmail");
 let inputPassword = document.getElementById("inputPassword");
-let inputEmailsign = document.getElementById("inputEmailsign");
-let inputPasswordsign = document.getElementById("inputPasswordsign");
 let loginid = document.getElementById("loginid");
 let signoutid = document.getElementById("signoutid");
 let buttons = document.getElementById("buttons");
@@ -13,16 +11,14 @@ var userdata;
 var storeduser;
 
 async function login() {
-	console.log("changing webpages");
 	var data = await [inputEmail.value, inputPassword.value]
 	await socket.emit('logindata', data)
 	event.preventDefault()
 }
 
-function signup() {
-	console.log(userdata);
-	// var data = [inputEmailsign.value, inputPasswordsign.value]
-	// socket.emit('signupdata', data)
+function signupredirect() {
+	window.location.href = '/signup';
+	event.preventDefault()
 }
 
 function proceed() {
@@ -59,18 +55,26 @@ function checkuser() {
 checkuser();
 
 socket.on('signInWithEmailAndPassword', async function(data) {
-	sessionStorage.setItem("user", JSON.stringify(data));
-	storeduser = JSON.parse(sessionStorage.getItem("user"));
-	console.log(storeduser);
-	userdata = await data;
-	await console.log(data);
+	switch (data) {
+		case 1: //successfully created user
+			sessionStorage.setItem("user", JSON.stringify(data));
+			storeduser = JSON.parse(sessionStorage.getItem("user"));
+			// console.log(storeduser);
+			userdata = await data;
+			await console.log(data);
 
-	if (userdata) {
-		window.location.href = await '/database';
-		socket.emit('userdata', userdata);
-		event.preventDefault()
-	} else {
-		console.log("fail")
+			if (userdata) {
+				window.location.href = await '/database';
+				socket.emit('userdata', userdata);
+				event.preventDefault()
+			} else {
+				console.log("fail")
+			}
+		break;
+
+		case 0: //failed created user
+			console.log("Incorrect username or password.");
+		break;
 	}
 });
 
