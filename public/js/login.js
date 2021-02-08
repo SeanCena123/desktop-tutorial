@@ -64,19 +64,20 @@ function checkuser() {
 }
 checkuser();
 
+
 socket.on('signInWithEmailAndPassword', async function(data) {
-	switch (data) {
+	switch (data[0]) {
 		case 1: //successfully created user
-			sessionStorage.setItem("user", JSON.stringify(data));
+			sessionStorage.setItem("user", JSON.stringify(data[1]));
 			storeduser = JSON.parse(sessionStorage.getItem("user"));
 			// console.log(storeduser);
-			userdata = await data;
-			await console.log(data);
+			userdata = await data[1];
+			await console.log(data[1]);
 
 			if (userdata) {
 				window.location.href = await '/database';
 				socket.emit('userdata', userdata);
-				event.preventDefault()
+				await event.preventDefault()
 			} else {
 				console.log("fail")
 			}

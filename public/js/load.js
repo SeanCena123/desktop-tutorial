@@ -1,10 +1,110 @@
+var socket = io.connect(); 
 var currentuser = JSON.parse(sessionStorage.getItem("user"));
+console.log("loaded into load.js")
+var databasebody = document.getElementById("databasebody");
+let array;
+var openfile;
+var pageid;
+var scrollable;
+var mymymarquee;  
+var defaultext;
+var placeholder;
+var bold;
+var resultbanner;
+var hoverprinc;
+var sourcepaperpdf;
+var videohover;
+var searchinput;
+var buttonsearch; 
+var dropdownMenuButtonsubject;
+var dropdownMenuButtonsource;
+var dropdownMenuButtonyear;
+var dropdownMenuButtonunit;
+var dropdownMenuButtontopic;
+var sourcesolutionpdf;
+var resultsearch;
+var resultquestionbanner;
+var sourcewritten;
+var topicid;
+var resultamount;
+var amountlabel;
+var searchinputvalue;
+var x;
+var y;
+var z;
+var arrFiltered;
+
+//searchresultnum() variables
+var marquee1;
+var div4;
+var bold1;	
+
+//searchresultpage() variables
+var countnum;
+var pagearr;
+var pagenumber;
+var addcount;
+
 
 if (currentuser != null) {
+
+	databasebody.innerHTML = "<h1> User logged in. </h1>"
+	socket.emit('databasebody', 'value');
+
+	socket.on('databasebody', async function(data) {
+		console.log(data);
+		databasebody.innerHTML = await data;
+		
+		array = [document.getElementById("dropdownMenuButtonsubject"), document.getElementById("dropdownMenuButtonsource"), document.getElementById("dropdownMenuButtonyear"), document.getElementById("dropdownMenuButtonunit"), document.getElementById("dropdownMenuButtontopic")];
+		openfile = [1, 1, 1];
+		pageid = document.getElementById("pageid");
+		scrollable = document.getElementById("scrollable");
+		mymymarquee = document.getElementById("mymarquee");  
+		defaultext = document.getElementById("defaultext");
+		placeholder = document.getElementById("placeholder");
+		bold = document.getElementById("bold")
+		resultbanner = document.getElementById("resultbanner");
+		hoverprinc = document.getElementById("hoverprinc");
+		sourcepaperpdf = document.getElementById("sourcepaperpdf");
+		videohover = document.getElementById("videohover");
+		searchinput = document.getElementById("searchinput");
+		buttonsearch = document.getElementById("buttonsearch"); 
+		dropdownMenuButtonsubject = document.getElementById("dropdownMenuButtonsubject")
+		dropdownMenuButtonsource = document.getElementById("dropdownMenuButtonsource");
+		dropdownMenuButtonyear = document.getElementById("dropdownMenuButtonyear");
+		dropdownMenuButtonunit = document.getElementById("dropdownMenuButtonunit");
+		dropdownMenuButtontopic = document.getElementById("dropdownMenuButtontopic");
+		sourcesolutionpdf = document.getElementById("sourcesolutionpdf");
+		resultsearch = document.getElementById("resultsearch");
+		resultquestionbanner = document.getElementById("resultquestionbanner");
+		sourcewritten = document.getElementById("sourcewritten");
+		topicid = document.getElementById("topicid");
+		resultamount = document.getElementById("resultamount");
+
+		countnum = 0;
+		pagearr = [];
+		pagenumber = countnum+1;
+		addcount = 0;
+
+		x = window.innerWidth;
+
+	});
+
+
+	// async function databasefunc() {
+	// 	await socket.emit('databasebody', 'value');
+
+	// 	await socket.on('databasebody', async function(data) {
+	// 		console.log(data);
+	// 		databasebody.innerHTML = await data;
+	// 	});
+
+	// }
+
+	// databasefunc();
+
 	console.log("user is still logged in.")
 	console.log(currentuser);
-	
-	var socket = io.connect(); 
 
 	socket.emit('connections', 'value');
 
@@ -13,37 +113,6 @@ if (currentuser != null) {
 			array[i].style.backgroundColor = "#00d5a3";
 		}
 	}	
-
-	var openfile = [1, 1, 1];
-	var pageid = document.getElementById("pageid");
-	let scrollable = document.getElementById("scrollable");
-	let mymymarquee = document.getElementById("mymarquee");  
-	let defaultext = document.getElementById("defaultext");
-	let placeholder = document.getElementById("placeholder");
-	let bold = document.getElementById("bold")
-	let resultbanner = document.getElementById("resultbanner");
-	let array = [document.getElementById("dropdownMenuButtonsubject"), document.getElementById("dropdownMenuButtonsource"), document.getElementById("dropdownMenuButtonyear"), document.getElementById("dropdownMenuButtonunit"), document.getElementById("dropdownMenuButtontopic")];
-	let hoverprinc = document.getElementById("hoverprinc");
-	let sourcepaperpdf = document.getElementById("sourcepaperpdf");
-	let videohover = document.getElementById("videohover");
-	let searchinput = document.getElementById("searchinput");
-	let buttonsearch = document.getElementById("buttonsearch"); 
-	let dropdownMenuButtonsubject = document.getElementById("dropdownMenuButtonsubject")
-	let dropdownMenuButtonsource = document.getElementById("dropdownMenuButtonsource");
-	let dropdownMenuButtonyear = document.getElementById("dropdownMenuButtonyear");
-	let dropdownMenuButtonunit = document.getElementById("dropdownMenuButtonunit");
-	let dropdownMenuButtontopic = document.getElementById("dropdownMenuButtontopic")
-	let sourcesolutionpdf = document.getElementById("sourcesolutionpdf");
-	let resultsearch = document.getElementById("resultsearch");
-	let resultquestionbanner = document.getElementById("resultquestionbanner");
-	let sourcewritten = document.getElementById("sourcewritten");
-	let topicid = document.getElementById("topicid");
-	let resultamount = document.getElementById("resultamount");
-	var amountlabel;
-	var searchinputvalue;
-	var y;
-	var z;
-	var arrFiltered = [];
 
 	async function searching() {
 		resultsearch.innerHTML = '';
@@ -72,9 +141,6 @@ if (currentuser != null) {
 		}
 	});
 
-	var marquee1;
-	var div4;
-	var bold1;
 	async function searchresultnum() {
 		await socket.emit('searchresultnum', 'value');
 	}
@@ -106,11 +172,6 @@ if (currentuser != null) {
 		searchresultpage();
 	});
 
-
-	var countnum = 0;
-	var pagearr = [];
-	var pagenumber = countnum+1;
-	var addcount = 0;
 	function searchresultpage() {
 		var pageid = document.getElementById("pageid");
 		var num = [1, 2, 3];
@@ -630,7 +691,6 @@ if (currentuser != null) {
 		}
 
 		function windowcheckdefault() {
-			var x = window.innerWidth;
 			if (x >= 993 && x < 1201) {
 				if (bold1.innerHTML.length < 76) {
 					for (var i = 0; i < (50); i++) {
@@ -779,10 +839,11 @@ if (currentuser != null) {
 	}
 
 
-	searchinput.addEventListener("keyup", function(event) {
+	databasebody.addEventListener("keyup", function(event) {
 		if (event.keyCode === 13) {
 			if (searchinput.value == '') {
 				if ((dropdownMenuButtonsubject.innerHTML == 'Subject') && (dropdownMenuButtonsource.innerHTML == 'Source') && (dropdownMenuButtonyear.innerHTML == 'Year') && (dropdownMenuButtonunit.innerHTML == 'Unit') && (dropdownMenuButtontopic.innerHTML == 'Topic')) {
+					//windowcheckdefault();
 					resultsearch.innerHTML = '';
 					pageid.innerHTML = '';
 					resultamount.innerHTML = '';
@@ -798,7 +859,7 @@ if (currentuser != null) {
 	function mouseclicksearch() {
 		if (searchinput.value == '') {
 			if ((dropdownMenuButtonsubject.innerHTML == 'Subject') && (dropdownMenuButtonsource.innerHTML == 'Source') && (dropdownMenuButtonyear.innerHTML == 'Year') && (dropdownMenuButtonunit.innerHTML == 'Unit') && (dropdownMenuButtontopic.innerHTML == 'Topic')) {
-				windowcheckdefault();
+				//windowcheckdefault();
 				resultsearch.innerHTML = '';
 				pageid.innerHTML = '';
 				resultamount.innerHTML = '';
@@ -938,6 +999,8 @@ if (currentuser != null) {
 		topicid.appendChild(a);
 	}
 } else {
+	databasebody.innerHTML = "<h1> User not logged in. </h1>"
+
 	console.log("user is not logged in.")
 }
 

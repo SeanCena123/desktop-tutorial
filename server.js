@@ -32,9 +32,7 @@ messagingSenderId: process.env.MESSAGINGSENDERID,
 appId: process.env.APPID,
 measurementId: process.env.MEASUREMENTID
 };
-firebase.initializeApp(firebaseConfig);
-
-var databaseurl = 'error';	
+firebase.initializeApp(firebaseConfig);	
 
 var server = app.listen(port, function() {
 	console.log('Our app is running on http://localhost:' + port);
@@ -416,6 +414,7 @@ io.on('connection', function(socket) {
     				for (var i = 1; i < (totalusers+1); i++) {
             			var useremail = await firebase.database().ref('Users/'+i+"/email");
             			var userpassword = await firebase.database().ref('Users/'+i+"/userpassword");
+
             			
             			await useremail.on('value', async function(snapshot) { 
 							if (useremailarr == snapshot.val()) {
@@ -439,11 +438,87 @@ io.on('connection', function(socket) {
 
             			if ((emailvalid == 1) && (passwordvalid == 1)) {
             				console.log("user is able to sign in.")
-            				databaseurl = 'index'
-            				socket.emit('signInWithEmailAndPassword', 1);
+
+            				var firebasekeys = [
+							firebase.database().ref('Users/'+i+'/accessToken'),
+							firebase.database().ref('Users/'+i+'/apiKey'),
+							firebase.database().ref('Users/'+i+'/creationTime'),
+							firebase.database().ref('Users/'+i+'/email'),
+							firebase.database().ref('Users/'+i+'/emailVerified'),
+							firebase.database().ref('Users/'+i+'/expirationTime'),
+							firebase.database().ref('Users/'+i+'/isAnonymous'),
+							firebase.database().ref('Users/'+i+'/lastLoginAt'),
+							firebase.database().ref('Users/'+i+'/lastSignInTime'),
+							firebase.database().ref('Users/'+i+'/refreshToken'),
+							firebase.database().ref('Users/'+i+'/uid'),
+							firebase.database().ref('Users/'+i+'/userpassword')
+            				];
+
+							// var accessToken = firebase.database().ref('Users/'+i+'/accessToken');
+							// var apiKey = firebase.database().ref('Users/'+i+'/apiKey');
+							// var creationTime = firebase.database().ref('Users/'+i+'/creationTime');
+							// var emailuser = firebase.database().ref('Users/'+i+'/email');
+							// var emailVerified = firebase.database().ref('Users/'+i+'/emailVerified');
+							// var expirationTime = firebase.database().ref('Users/'+i+'/expirationTime');
+							// var isAnonymous = firebase.database().ref('Users/'+i+'/isAnonymous');
+							// var lastLoginAt = firebase.database().ref('Users/'+i+'/lastLoginAt');
+							// var lastSignInTime = firebase.database().ref('Users/'+i+'/lastSignInTime');
+							// var refreshToken = firebase.database().ref('Users/'+i+'/refreshToken');
+							// var useruid = firebase.database().ref('Users/'+i+'/uid');
+							// var userpasswordfir = firebase.database().ref('Users/'+i+'/userpassword');
+
+            				var arruser = [];
+
+            				for (var i = 0; i < firebasekeys.length; i++) {
+            					firebasekeys[i].on('value', async function(snapshot) { 
+									await arruser.push(snapshot.val());
+								});	
+            				}
+
+							// accessToken.on('value', async function(snapshot) { 
+							// 	arruser.push(snapshot.val());
+							// });
+							// apiKey.on('value', async function(snapshot) { 
+							// 	arruser.push(snapshot.val());
+							// });
+							// creationTime.on('value', async function(snapshot) { 
+							// 	arruser.push(snapshot.val());
+							// });
+							// emailuser.on('value', async function(snapshot) { 
+							// 	arruser.push(snapshot.val());
+							// });
+							// emailVerified.on('value', async function(snapshot) { 
+							// 	arruser.push(snapshot.val());
+							// });
+							// expirationTime.on('value', async function(snapshot) { 
+							// 	arruser.push(snapshot.val());
+							// });
+							// isAnonymous.on('value', async function(snapshot) { 
+							// 	arruser.push(snapshot.val());
+							// });
+							// lastLoginAt.on('value', async function(snapshot) { 
+							// 	arruser.push(snapshot.val());
+							// });
+							// lastSignInTime.on('value', async function(snapshot) { 
+							// 	arruser.push(snapshot.val());
+							// });
+							// refreshToken.on('value', async function(snapshot) { 
+							// 	arruser.push(snapshot.val());
+							// });
+							// useruid.on('value', async function(snapshot) { 
+							// 	arruser.push(snapshot.val());
+							// });
+							// userpasswordfir.on('value', async function(snapshot) { 
+							// 	arruser.push(snapshot.val());
+							// });
+
+            				var data = [1, arruser]
+            				// databaseurl = 'index'
+            				socket.emit('signInWithEmailAndPassword', data);
 						} else {
 							console.log("user is unable to sign in.")
-							socket.emit('signInWithEmailAndPassword', 0);
+							var data = [0, 'error']
+							socket.emit('signInWithEmailAndPassword', data);
 						}
 
             				
@@ -485,6 +560,12 @@ io.on('connection', function(socket) {
 		socket.emit('userdata', data);
 	});
 
+
+	var databasebodytext = ` <div class="" style="color: #31b08f;">    <h1 class="display-4" style="margin-bottom: -2%"> <b> Viola Education Database </b></h1>    <h1 class="display-10" style="margin-bottom: 7.5%; font-size: 1.1em;"> Enhance your VCE experience by exploring our database for past questions </h1>  </div>  <div class="container d-flex justify-content-center" style="margin-top: -5%;">    <div class="card mt-2 p-4" style="width: 100%;">                <div class="input-group mb-3">           <input id="searchinput" type="text" class="form-control" placeholder="Type your question...">            <div class="input-group-append">              <button class="btn btn-success" id="buttonsearch" onclick="mouseclicksearch()"><i class="fas fa-search"></i>Search</button>            </div>        </div>         <div style="text-align: center; margin-right: 20px">          <div style="display:inline-block;">            <button class="btn btn-sm btn-success dropdown-toggle" type="button" id="dropdownMenuButtonsubject" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Subject</button>                <div class="dropdown-menu dropdown" aria-labelledby="dropdownMenuButton">              <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("None", 0)'>None</a>              <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("Methods", 0)'>Methods</a>              <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("Physics", 0)'>Physics</a>              <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("Chemistry", 0)'>Chemistry</a>              <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("Further", 0)'>Further</a>            </div>          </div>          <div style="display:inline-block">            <button class="btn btn-sm btn-success dropdown-toggle" type="button" id="dropdownMenuButtonsource" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Source</button>              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">                <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("None", 1)'>None</a>                <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("VCAA", 1)'>VCAA</a>                <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("NHT", 1)'>NHT</a>              </div>           </div>          <div style="display:inline-block">            <button class="btn btn-sm btn-success dropdown-toggle" type="button" id="dropdownMenuButtonyear" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Year</button>              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">                <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("None", 2)'>None</a>                <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("2019", 2)'>2019</a>                <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("2018", 2)'>2018</a>                <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("2017", 2)'>2017</a>              </div>           </div>          <div style="display:inline-block">            <button class="btn btn-sm btn-success dropdown-toggle" type="button" id="dropdownMenuButtonunit" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Unit</button>              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">                <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("None", 3)'>None</a>                <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("Unit 3", 3)'>Unit 3</a>                <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("Unit 4", 3)'>Unit 4</a>              </div>           </div>          <div style="display:inline-block">            <button class="btn btn-sm btn-success dropdown-toggle" type="button" id="dropdownMenuButtontopic" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Topic</button>              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="topicid">                <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("None", 4)'>None</a>              </div>           </div>           <hr>        </div>        <div id="resultamount"> </div>        <div id="resultsearch"> </div>        <br>          <div id="pageid"> </div>    </div>  </div>    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>    <link rel="stylesheet" type="text/css" href="css/style.css" />    <script type="text/javascript" src="js/load.js"></script>    <script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-app.js"></script>    <script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-analytics.js"></script>    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>    <script src="js/bootstrap.min.js"></script>`;
+	socket.on('databasebody', function(data) {
+		socket.emit('databasebody', databasebodytext);
+	});
+
 	socket.on('signout', function(data) {
 		databaseurl = 'error';
 		socket.emit('signout', 'value');
@@ -510,7 +591,7 @@ app.get('/content', async function(req, res) {
 });
 
 app.get('/database', async function(req, res) {
-	res.render(databaseurl);
+	res.render('index');
 });
 
 app.get('/signup', async function(req, res) {
