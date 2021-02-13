@@ -2,16 +2,19 @@ var socket = io.connect();
 
 socket.emit('connections', 'value');
 	
-let inputEmail = document.getElementById("inputEmail");
-let inputPassword = document.getElementById("inputPassword");
+var inputEmail = document.getElementById("inputEmail");
+var inputPassword = document.getElementById("inputPassword");
 let loginid = document.getElementById("loginid");
 let signoutid = document.getElementById("signoutid");
 let buttons = document.getElementById("buttons");
+var credentials = document.getElementById("credentials");
 var userdata;
 var storeduser;
 
 async function login() {
 	var currentuser = JSON.parse(sessionStorage.getItem("user"));
+	inputEmail = document.getElementById("inputEmail");
+	inputPassword = document.getElementById("inputPassword");
 	if (currentuser != null) {
 		console.log("user is alreayd logged in.");
 	} else {
@@ -28,6 +31,7 @@ function signupredirect() {
 
 function proceed() {
 	window.location.href = '/database';
+	event.preventDefault()
 }
 
 function signout() {
@@ -56,9 +60,11 @@ function checkuser() {
 	if (currentuser != null) {
 		console.log("user is still logged in.")
 		console.log(currentuser);
+		credentials.innerHTML = '';
 		buttons.innerHTML = '<button id="proceedid" class="btn btn-lg btn-success btn-block" type="submit" onclick="proceed()">Database</button>  <button id="signoutid" class="btn btn-lg btn-danger btn-block" type="submit" onclick="signout()">Sign Out</button>';
 	} else {
 		console.log("user is not logged in.")
+		credentials.innerHTML = `<label for="inputEmail" class="sr-only">Email address</label>      <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>      <label for="inputPassword" class="sr-only">Password</label>      <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>`;
 		buttons.innerHTML = '<button class="btn btn-lg btn-success btn-block" type="submit" onclick="signupredirect()">Sign Up</button>  <button id="loginid" class="btn btn-lg btn-success btn-block" type="submit" onclick="login()">Sign In</button>';
 	}
 }
