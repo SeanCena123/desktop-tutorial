@@ -2,6 +2,17 @@ var socket = io.connect({secure: true});
 var currentuser = JSON.parse(sessionStorage.getItem("user"));
 var accountbody = document.getElementById("accountbody");
 
+var firstname;
+var lastname;
+var schoolname;
+var accounttype;
+var yearlevel;
+
+
+var resetpasswordtype;
+var resetpasswordretype;
+var errorplacement;
+
 if (currentuser != null) {  
 socket.emit('tokenverify', currentuser);
     socket.on('tokenverify', async function(data) {
@@ -18,16 +29,16 @@ socket.emit('tokenverify', currentuser);
         socket.on('accountbody', async function(data) {
 			accountbody.innerHTML = await data;
 
-            var firstname = document.getElementById('first-name');
-            var lastname = document.getElementById('last-name');
-            var schoolname = document.getElementById('school-name');
-            var accounttype = document.getElementById('account-type');
-            var yearlevel = document.getElementById('year-level');
+            firstname = document.getElementById('first-name');
+            lastname = document.getElementById('last-name');
+            schoolname = document.getElementById('school-name');
+            accounttype = document.getElementById('account-type');
+            yearlevel = document.getElementById('year-level');
             
             
-            var resetpasswordtype = document.getElementById('reset-password');
-            var resetpasswordretype = document.getElementById('reset-password-retype');
-            var errorplacement = document.getElementById('error-placement');
+            resetpasswordtype = document.getElementById('reset-password');
+            resetpasswordretype = document.getElementById('reset-password-retype');
+            errorplacement = document.getElementById('error-placement');
 
             socket.emit('account-detail', currentuser);
 
@@ -124,43 +135,43 @@ socket.emit('tokenverify', currentuser);
                     break; 
                 }
             });
-            
-            function resetpassword() {
-                console.log(resetpasswordtype.value);
-                console.log(resetpasswordretype.value);
-                var data = [resetpasswordtype.value, resetpasswordretype.value, currentuser];
-                if (data[0] == '' || data[1] == '') {
-                    errorplacement.innerHTML = '';
-                } else {
-                    socket.emit('resetpassword', data);
-                }
-            }
-            
-            socket.on('password-error', function(data) {
-                  errorplacement.innerHTML = '';
-                  var p1 = document.createElement('p');
-                  var b1 = document.createElement('b');
-                  
-                  p1.style = "color: red; font-size: 13px; margin-top: 10px;";
-                  b1.innerHTML = data;
-            
-                  p1.appendChild(b1);
-                  errorplacement.appendChild(p1)
-            });
-            
-            socket.on('password-success', function(data) {
-                errorplacement.innerHTML = '';
-                var p1 = document.createElement('p');
-                var b1 = document.createElement('b');
-                
-                p1.style = "color: green; font-size: 13px; margin-top: 10px;";
-                b1.innerHTML = data;
-            
-                p1.appendChild(b1);
-                errorplacement.appendChild(p1)
-            });
-
         });	
 
     });
+
+    function resetpassword() {
+        console.log(resetpasswordtype.value);
+        console.log(resetpasswordretype.value);
+        var data = [resetpasswordtype.value, resetpasswordretype.value, currentuser];
+        if (data[0] == '' || data[1] == '') {
+            errorplacement.innerHTML = '';
+        } else {
+            socket.emit('resetpassword', data);
+        }
+    }
+    
+    socket.on('password-error', function(data) {
+          errorplacement.innerHTML = '';
+          var p1 = document.createElement('p');
+          var b1 = document.createElement('b');
+          
+          p1.style = "color: red; font-size: 13px; margin-top: 10px;";
+          b1.innerHTML = data;
+    
+          p1.appendChild(b1);
+          errorplacement.appendChild(p1)
+    });
+    
+    socket.on('password-success', function(data) {
+        errorplacement.innerHTML = '';
+        var p1 = document.createElement('p');
+        var b1 = document.createElement('b');
+        
+        p1.style = "color: green; font-size: 13px; margin-top: 10px;";
+        b1.innerHTML = data;
+    
+        p1.appendChild(b1);
+        errorplacement.appendChild(p1)
+    });
+
 }
