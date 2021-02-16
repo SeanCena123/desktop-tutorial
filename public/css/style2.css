@@ -39,3 +39,37 @@
 a {
   color: white
 }
+
+.btn {
+    background: #00CCA1;
+    border: #00CCA1
+}
+
+.btn:hover {
+    background: #00B8A1;
+    border: #00B8A1
+}
+
+.btn:click {
+    background: #00B8A1;
+    border: #00B8A1
+}
+
+.btn:active {
+    background: #00B8A1;
+    border: #00B8A1
+}
+
+.btn:disable {
+    background: #00CCA1;
+    border: #00CCA1
+}
+
+.btn:focus {
+    background: #00B8A1;
+    border: #00B8A1
+}
+
+.btn:visited {
+  color: purple;
+}
