@@ -532,7 +532,7 @@ io.on('connection', function(socket) {
     	var passwordvalid = 0;
 
             var ref = await firebase.database().ref('Users/');
-			await ref.once('value', async function(snapshot) { 
+			await ref.on('value', async function(snapshot) { 
 				var totalusers = await snapshot.numChildren(); 
 
     				for (var i = 1; i < (totalusers+1); i++) {
@@ -540,7 +540,7 @@ io.on('connection', function(socket) {
             			var userpassword = await firebase.database().ref('Users/'+i+"/userpassword");
 
             			
-            			await useremail.once('value', async function(snapshot) { 
+            			await useremail.on('value', async function(snapshot) { 
 							if (useremailarr == snapshot.val()) {
 								emailvalid = 1;
 								console.log("email is correct.")
@@ -550,7 +550,7 @@ io.on('connection', function(socket) {
 							}
 						});
 
-            			await userpassword.once('value', async function(snapshot) { 
+            			await userpassword.on('value', async function(snapshot) { 
 							if (userpasswordarr == snapshot.val()) {
 								passwordvalid = 1;
 								console.log("password is correct.")
@@ -580,7 +580,7 @@ io.on('connection', function(socket) {
             				var arruser = [];
 
             				for (var a = 0; a < firebasekeys.length; a++) {
-            					firebasekeys[a].once('value', async function(snapshot) { 
+            					firebasekeys[a].on('value', async function(snapshot) { 
 									await arruser.push(snapshot.val());
 								});	
             				}
