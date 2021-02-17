@@ -125,6 +125,17 @@ io.on('connection', function(socket) {
 		return socket.emit('tokenverify', result);
     });
 
+	socket.on('generatepass', function(data) {
+		var result = '';
+		var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+		var charactersLength = characters.length;
+		for ( var i = 0; i < 9; i++ ) {
+		   result += characters.charAt(Math.floor(Math.random() * charactersLength));
+		}
+
+		return socket.emit('generatepass', result);
+    });
+
     socket.on('tokenverification', function(data) {
 		tokenfunc('tokenverification', data);
     });
@@ -494,7 +505,7 @@ io.on('connection', function(socket) {
 					userdirectory.child("year-level").set(usercred[3]);
 					userdirectory.child("school-name").set(usercred[4]);
 
-				    var data = [1, user]
+				    var data = [1, user.email, password]
 				    console.log("successfully created user.")
 				    socket.emit('signupdata', data);
 				    // ...
@@ -521,7 +532,7 @@ io.on('connection', function(socket) {
     	var passwordvalid = 0;
 
             var ref = await firebase.database().ref('Users/');
-			await ref.on('value', async function(snapshot) { 
+			await ref.once('value', async function(snapshot) { 
 				var totalusers = await snapshot.numChildren(); 
 
     				for (var i = 1; i < (totalusers+1); i++) {
@@ -529,7 +540,7 @@ io.on('connection', function(socket) {
             			var userpassword = await firebase.database().ref('Users/'+i+"/userpassword");
 
             			
-            			await useremail.on('value', async function(snapshot) { 
+            			await useremail.once('value', async function(snapshot) { 
 							if (useremailarr == snapshot.val()) {
 								emailvalid = 1;
 								console.log("email is correct.")
@@ -539,7 +550,7 @@ io.on('connection', function(socket) {
 							}
 						});
 
-            			await userpassword.on('value', async function(snapshot) { 
+            			await userpassword.once('value', async function(snapshot) { 
 							if (userpasswordarr == snapshot.val()) {
 								passwordvalid = 1;
 								console.log("password is correct.")
@@ -566,68 +577,16 @@ io.on('connection', function(socket) {
 							firebase.database().ref('Users/'+i+'/uid'),
 							firebase.database().ref('Users/'+i+'/userpassword')
             				];
-
-							// var accessToken = firebase.database().ref('Users/'+i+'/accessToken');
-							// var apiKey = firebase.database().ref('Users/'+i+'/apiKey');
-							// var creationTime = firebase.database().ref('Users/'+i+'/creationTime');
-							// var emailuser = firebase.database().ref('Users/'+i+'/email');
-							// var emailVerified = firebase.database().ref('Users/'+i+'/emailVerified');
-							// var expirationTime = firebase.database().ref('Users/'+i+'/expirationTime');
-							// var isAnonymous = firebase.database().ref('Users/'+i+'/isAnonymous');
-							// var lastLoginAt = firebase.database().ref('Users/'+i+'/lastLoginAt');
-							// var lastSignInTime = firebase.database().ref('Users/'+i+'/lastSignInTime');
-							// var refreshToken = firebase.database().ref('Users/'+i+'/refreshToken');
-							// var useruid = firebase.database().ref('Users/'+i+'/uid');
-							// var userpasswordfir = firebase.database().ref('Users/'+i+'/userpassword');
-
             				var arruser = [];
 
             				for (var a = 0; a < firebasekeys.length; a++) {
-            					firebasekeys[a].on('value', async function(snapshot) { 
+            					firebasekeys[a].once('value', async function(snapshot) { 
 									await arruser.push(snapshot.val());
 								});	
             				}
 							arruser.push(i);
-							// accessToken.on('value', async function(snapshot) { 
-							// 	arruser.push(snapshot.val());
-							// });
-							// apiKey.on('value', async function(snapshot) { 
-							// 	arruser.push(snapshot.val());
-							// });
-							// creationTime.on('value', async function(snapshot) { 
-							// 	arruser.push(snapshot.val());
-							// });
-							// emailuser.on('value', async function(snapshot) { 
-							// 	arruser.push(snapshot.val());
-							// });
-							// emailVerified.on('value', async function(snapshot) { 
-							// 	arruser.push(snapshot.val());
-							// });
-							// expirationTime.on('value', async function(snapshot) { 
-							// 	arruser.push(snapshot.val());
-							// });
-							// isAnonymous.on('value', async function(snapshot) { 
-							// 	arruser.push(snapshot.val());
-							// });
-							// lastLoginAt.on('value', async function(snapshot) { 
-							// 	arruser.push(snapshot.val());
-							// });
-							// lastSignInTime.on('value', async function(snapshot) { 
-							// 	arruser.push(snapshot.val());
-							// });
-							// refreshToken.on('value', async function(snapshot) { 
-							// 	arruser.push(snapshot.val());
-							// });
-							// useruid.on('value', async function(snapshot) { 
-							// 	arruser.push(snapshot.val());
-							// });
-							// userpasswordfir.on('value', async function(snapshot) { 
-							// 	arruser.push(snapshot.val());
-							// });
 
             				var data = [1, arruser]
-            				// databaseurl = 'index'
-							// console.log(arruser);
             				socket.emit('signInWithEmailAndPassword', data);
 						} else {
 							console.log("user is unable to sign in.")
@@ -639,34 +598,6 @@ io.on('connection', function(socket) {
     				}
 
 			});
-
-    
-		// firebase.auth().signInWithEmailAndPassword(email, password)
-		//   .then((userCredential) => {
-		//     // Signed in 
-		//     user = userCredential.user;
-		//     databaseurl = 'index'
-		//     var data = [1, user];
-		//     console.log('successfully signed in.')
-		//     socket.emit('signInWithEmailAndPassword', data);
-
-		// 	// firebase.auth().onAuthStateChanged(function(user) {
-		// 	//   if (user) {
-		// 	//     console.log("success");
-		// 	//     socket.emit('loginsuccess', user);
-		// 	//   } else {
-		// 	//     console.log("failed");
-		// 	//   }
-		// 	// });
-		//   })
-		//   .catch((error) => {
-		//     var errorCode = error.code;
-		//     var errorMessage = error.message;
-		//     var data = [0, error.message];
-		//     socket.emit('signInWithEmailAndPassword', data);
-
-		//     // ..
-		//   });
     });
 
 	socket.on('userdata', function(data) {
@@ -676,8 +607,8 @@ io.on('connection', function(socket) {
 
 
 	var databasebodytext = ` <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top" style="outline: black; ">        <a class="navbar-brand" href="/" style="color: #31b08f;;"><b>VIOLA</b></a>        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">          <span class="navbar-toggler-icon"></span>        </button>              <div class="collapse navbar-collapse" id="navbarSupportedContent">          <ul class="navbar-nav mr-auto">            <li class="nav-item">              <a class="nav-link" onclick="sessionstatefunc()" style="cursor: pointer">Database</a>            </li>            <li class="nav-item">              <a class="nav-link" href="#">About</a>            </li>          </ul>          <form class="form-inline my-2 my-lg-0">            <a class="btn my-2 my-sm-0" type="submit" style="color: white" href='/account'>Account</a>          </form>        </div>      </nav> <div class="" style="color: #31b08f;">    <h1 class="display-4" style="margin-bottom: -2%"> <b> Viola Education Database </b></h1>    <h1 class="display-10" style="margin-bottom: 7.5%; font-size: 1.1em;"> Enhance your VCE experience by exploring our database for past questions </h1>  </div>  <div class="container d-flex justify-content-center" style="margin-top: -5%;">    <div class="card mt-2 p-4" style="width: 100%;">                <div class="input-group mb-3">           <input id="searchinput" type="text" class="form-control" placeholder="Type your question...">            <div class="input-group-append">              <button class="btn btn-success" id="buttonsearch" onclick="mouseclicksearch()"><i class="fas fa-search"></i>Search</button>            </div>        </div>         <div style="text-align: center; margin-right: 20px">          <div style="display:inline-block;">            <button class="btn btn-sm btn-success dropdown-toggle" type="button" id="dropdownMenuButtonsubject" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Subject</button>                <div class="dropdown-menu dropdown" aria-labelledby="dropdownMenuButton">              <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("None", 0)'>None</a>              <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("Methods", 0)'>Methods</a>              <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("Physics", 0)'>Physics</a>              <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("Chemistry", 0)'>Chemistry</a>              <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("Further", 0)'>Further</a>            </div>          </div>          <div style="display:inline-block">            <button class="btn btn-sm btn-success dropdown-toggle" type="button" id="dropdownMenuButtonsource" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Source</button>              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">                <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("None", 1)'>None</a>                <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("VCAA", 1)'>VCAA</a>                <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("NHT", 1)'>NHT</a>              </div>           </div>          <div style="display:inline-block">            <button class="btn btn-sm btn-success dropdown-toggle" type="button" id="dropdownMenuButtonyear" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Year</button>              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">                <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("None", 2)'>None</a>                <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("2019", 2)'>2019</a>                <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("2018", 2)'>2018</a>                <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("2017", 2)'>2017</a>              </div>           </div>          <div style="display:inline-block">            <button class="btn btn-sm btn-success dropdown-toggle" type="button" id="dropdownMenuButtonunit" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Unit</button>              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">                <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("None", 3)'>None</a>                <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("Unit 3", 3)'>Unit 3</a>                <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("Unit 4", 3)'>Unit 4</a>              </div>           </div>          <div style="display:inline-block">            <button class="btn btn-sm btn-success dropdown-toggle" type="button" id="dropdownMenuButtontopic" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Topic</button>              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="topicid">                <a class="dropdown-item btn-sm" href="#" onclick='dropdowntagfilter("None", 4)'>None</a>              </div>           </div>           <hr>        </div>        <div id="resultamount"> </div>        <div id="resultsearch"> </div>        <br>          <div id="pageid"> </div>    </div>   </div>    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>    <link rel="stylesheet" type="text/css" href="css/style.css" />    <script type="text/javascript" src="js/load.js"></script>     <script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-app.js"></script>    <script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-analytics.js"></script>    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>    <script src="js/bootstrap.min.js"></script>`;
-	var accountbodytext = `    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top" style="outline: black; ">        <a class="navbar-brand" href="/" style="color: #31b08f;;"><b>VIOLA</b></a>        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">          <span class="navbar-toggler-icon"></span>        </button>              <div class="collapse navbar-collapse" id="navbarSupportedContent">          <ul class="navbar-nav mr-auto">            <li class="nav-item">              <a class="nav-link" onclick="sessionstatefunc()" style="cursor: pointer">Database</a>            </li>            <li class="nav-item">              <a class="nav-link" href="#">About</a>            </li>          </ul>          <form class="form-inline my-2 my-lg-0">            <a class="btn my-2 my-sm-0" type="submit" style="color: white" href="/account">Account</a>          </form>        </div>      </nav>        <div class="" style="color: #31b08f;">    <h1 class="display-5" style="margin-bottom: 20px"> <b> Account Settings </b></h1>    <h1 class="display-4" style="font-size: 15px; margin-top: -10px;"> <b>To confirm changes, press enter.</b></h1>    <div style="text-align: center;">        <h1 class="display-4" style="font-size: 20px;">First Name:              <input class="form-control" id="first-name" style="margin-top: 10px;"></input>        </h1>    </div>     <div style="text-align: center;">        <h1 class="display-4" style="font-size: 20px;">Last Name:             <input class="form-control" id="last-name" style="margin-top: 10px;"></input>        </h1>    </div>    <div style="text-align: center;">      <h1 class="display-4" style="font-size: 20px;">Year Level           <input class="form-control" id="year-level" style="margin-top: 10px;" disabled></input>      </h1>  </div>      <div style="text-align: center;">      <h1 class="display-4" style="font-size: 20px;">Account Type<input class="form-control" id="account-type" style="margin-top: 10px;" disabled></input>      </h1>  </div>     <div style="text-align: center;">        <h1 class="display-4" style="font-size: 20px;">School:             <input class="form-control" id="school-name" style="margin-top: 10px;" disabled></input>        </h1>    </div>    <div style="text-align: center;">        <h1 class="display-4" style="font-size: 20px;">Reset Password:             <input class="form-control" id="reset-password" type="password" style="margin-top: 10px;" placeholder="type new password"></input>            <input class="form-control" id="reset-password-retype" type="password" style="margin-top: 10px;" placeholder="retype new password"></input>            <div id="error-placement">            </div>            <button id="loginid" class="btn btn-lg btn-success btn-block" type="submit" onclick="resetpassword()" style="margin-top: 10px;">Submit</button>        </h1>    </div>  </div>`;
-	var signupbody = `  <form class="form-signin">    <h1 class="h3 mb-3 font-weight-normal" style="color: #31b08f; font-size: 65px;"><b>VIOLA</b></h1> <br>        <div class="dropdown" style="margin-bottom: 15px;">      <button class="btn btn-success dropdown-toggle" type="button" id="accountTypesign" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Account Type</button>      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">        <a class="dropdown-item" href="#" onclick="accounttypechoose(0);">Student</a>        <a class="dropdown-item" href="#" onclick="accounttypechoose(1);">Teacher</a>        <a class="dropdown-item" href="#" onclick="accounttypechoose(2);">Developer</a>      </div>    </div>            <label for="inputFirstNamesign" class="sr-only">First Name</label>    <input id="inputFirstNamesign" class="form-control" placeholder="First Name" required autofocus>        <label for="inputLastNamesign" class="sr-only">Last Name</label>    <input id="inputLastNamesign" class="form-control" placeholder="Last Name" required autofocus> <br>        <label for="inputYearLevelsign" class="sr-only">Year Level</label>    <input id="inputYearLevelsign" class="form-control" placeholder="Year Level" required autofocus> <br>       <label for="inputSchoolsign" class="sr-only">School</label>    <input id="inputSchoolsign" class="form-control" placeholder="School" required autofocus> <br>       <label for="inputEmailsign" class="sr-only">Email address</label>    <input type="email" id="inputEmailsign" class="form-control" placeholder="Email address" required autofocus>        <label for="inputPasswordsign" class="sr-only">Password</label>    <input type="password" id="inputPasswordsign" class="form-control" placeholder="Password" required> <div id="errorplacementsignup"> </div>           <button class="btn btn-lg btn-success btn-block" type="submit" onclick="signup()">Confirm</button>  </form>  <script src="js/token.js"></script>  <script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-app.js"></script>  <script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-auth.js"></script>  <script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-analytics.js"></script>  <script src="js/signup.js"></script>  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>  <script src="js/bootstrap.min.js"></script>`;
+	var accountbodytext = `    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top" style="outline: black; ">        <a class="navbar-brand" href="/" style="color: #31b08f;;"><b>VIOLA</b></a>        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">          <span class="navbar-toggler-icon"></span>        </button>              <div class="collapse navbar-collapse" id="navbarSupportedContent">          <ul class="navbar-nav mr-auto">            <li class="nav-item">              <a class="nav-link" onclick="sessionstatefunc()" style="cursor: pointer">Database</a>            </li>            <li class="nav-item">              <a class="nav-link" href="#">About</a>            </li>          </ul>          <form class="form-inline my-2 my-lg-0">            <a class="btn my-2 my-sm-0" type="submit" style="color: white" href="/account">Account</a>          </form>        </div>      </nav>        <div class="" style="color: #31b08f;">    <h1 class="display-5" style="margin-bottom: 20px"> <b> Account Settings </b></h1>    <h1 class="display-4" style="font-size: 15px; margin-top: -10px;"> <b>To confirm changes, press enter.</b></h1>    <div style="text-align: center;">        <h1 class="display-4" style="font-size: 20px;">First Name:            <center>            <input class="form-control text-center" id="first-name" style="margin-top: 10px; width: 30%;"></input>          </center>        </h1>    </div>     <div style="text-align: center;">        <h1 class="display-4" style="font-size: 20px;">Last Name:           <center>            <input class="form-control text-center" id="last-name" style="margin-top: 10px; width: 30%;"></input>          </center>        </h1>    </div>    <div style="text-align: center;">      <h1 class="display-4" style="font-size: 20px;">Year Level         <center>          <input class="form-control text-center" id="year-level" style="margin-top: 10px; width: 30%;" disabled></input>        </center>      </h1>  </div>      <div style="text-align: center;">      <h1 class="display-4" style="font-size: 20px;">Account Type         <center>          <input class="form-control text-center" id="account-type" style="margin-top: 10px; width: 30%;" disabled></input>        </center>        </h1>  </div>     <div style="text-align: center;">        <h1 class="display-4" style="font-size: 20px;">School:           <center>            <input class="form-control text-center" id="school-name" style="margin-top: 10px; width: 30%;" disabled></input>          </center>          </h1>    </div>    <div style="text-align: center;">        <h1 class="display-4" style="font-size: 20px;">Reset Password:           <center>            <input class="form-control text-center" id="reset-password" type="password" style="margin-top: 10px; width: 30%;" placeholder="type new password"></input>            <input class="form-control text-center" id="reset-password-retype" type="password" style="margin-top: 10px; width: 30%;" placeholder="retype new password"></input>          </center>          <center>            <div id="error-placement">            </div>          </center>            <center>              <button class="btn btn-lg btn-success btn-block" type="submit" onclick="resetpassword()" style="margin-top: 10px; width: 30%;">Submit</button>            </center><br>          </h1>    </div>  </div><script type="text/javascript" src="js/token.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script><link rel="stylesheet" type="text/css" href="css/style.css" /><script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-app.js"></script><script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-analytics.js"></script><script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script><script src="js/bootstrap.min.js"></script><script type="text/javascript" src="js/account.js"></script>`;
+	var signupbody = `  <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top" style="outline: black; ">      <a class="navbar-brand" href="/" style="color: #31b08f;;"><b>VIOLA</b></a>      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">        <span class="navbar-toggler-icon"></span>      </button>          <div class="collapse navbar-collapse" id="navbarSupportedContent">        <ul class="navbar-nav mr-auto">          <li class="nav-item">            <a class="nav-link" onclick="sessionstatefunc()" style="cursor: pointer">Database</a>          </li>          <li class="nav-item">            <a class="nav-link" href="#">About</a>          </li>        </ul>        <form class="form-inline my-2 my-lg-0">          <a class="btn my-2 my-sm-0" type="submit" style="color: white" href="/account">Account</a>        </form>      </div>    </nav>        <div class="text-center">      <form class="form-signin">        <h1 class="display-5" style="margin-bottom: 20px"> <b style="color: #31b08f;"> SIGN UP USERS </b></h1> <br>                <div class="dropdown" style="margin-bottom: 15px;">          <button class="btn btn-success dropdown-toggle" type="button" id="accountTypesign" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Account Type</button>          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">            <a class="dropdown-item" href="#" onclick="accounttypechoose(0);">Student</a>            <a class="dropdown-item" href="#" onclick="accounttypechoose(1);">Teacher</a>            <a class="dropdown-item" href="#" onclick="accounttypechoose(2);">Developer</a>          </div>        </div>        <center>          <label for="inputFirstNamesign" class="sr-only">First Name</label>          <input id="inputFirstNamesign" class="form-control text-center" style="width: 35%; margin-bottom: 5px;" placeholder="First Name" required autofocus> </input>        </center>      <center>        <label for="inputLastNamesign" class="sr-only">Last Name</label>        <input id="inputLastNamesign" class="form-control text-center" style="width: 35%;" placeholder="Last Name" required autofocus> <br>      </center><br>      <center>        <label for="inputYearLevelsign" class="sr-only">Year Level</label>        <input id="inputYearLevelsign" class="form-control text-center" style="width: 35%;" placeholder="Year Level" required autofocus> <br>      </center><br>      <center>        <label for="inputSchoolsign" class="sr-only">School</label>        <input id="inputSchoolsign" class="form-control text-center" style="width: 35%;" placeholder="School" required autofocus> <br>      </center><br>              <center>        <label for="inputEmailsign" class="sr-only">Email address</label>        <input type="email" id="inputEmailsign" class="form-control text-center" style="width: 35%; margin-bottom: 5px;" placeholder="Email address" required autofocus>      </center>      <center>        <label for="inputPasswordsign" class="sr-only">Password</label>        <input type="password" id="inputPasswordsign" class="form-control text-center" style="width: 35%;" placeholder="Password" required>      </center>      <center>        <button class="btn btn-lg btn-secondary btn-block" style="width: 35%; margin-top: 7.5px" type="submit" onclick="generatepass();">Generate</button>      </center><br>      <center>      <div id="errorplacementsignup">       </div>    </center><br>      <center>        <button class="btn btn-lg btn-success btn-block" style="width: 35%;" type="submit" onclick="signup()">Confirm</button>      </center><br>            </form>    </div><script type="text/javascript" src="js/token.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script><link rel="stylesheet" type="text/css" href="css/style.css" /><script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-app.js"></script><script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-analytics.js"></script><script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script><script src="js/bootstrap.min.js"></script><script type="text/javascript" src="js/signup.js"></script>`;
 	socket.on('databasebody', function(data) {
 		socket.emit('databasebody', databasebodytext);
 	});
@@ -712,33 +643,33 @@ io.on('connection', function(socket) {
 				});	
 
 			break;
-			case 2:
-				var schoolnamesource = firebase.database().ref('Users/'+data[1][12]+'/school-name');
+			// case 2:
+			// 	var schoolnamesource = firebase.database().ref('Users/'+data[1][12]+'/school-name');
 		
-				schoolnamesource.on('value', async function(snapshot) { 
-					var schoolname = await snapshot.val();
-					var array = await [2, schoolname]
-					socket.emit('account-detail-change', array);
-				});	
-			break;
-			case 3:
-				var yearlevelsource = firebase.database().ref('Users/'+data[1][12]+'/year-level');
+			// 	schoolnamesource.on('value', async function(snapshot) { 
+			// 		var schoolname = await snapshot.val();
+			// 		var array = await [2, schoolname]
+			// 		socket.emit('account-detail-change', array);
+			// 	});	
+			// break;
+			// case 3:
+			// 	var yearlevelsource = firebase.database().ref('Users/'+data[1][12]+'/year-level');
 		
-				yearlevelsource.on('value', async function(snapshot) { 
-					var yearlevel = await snapshot.val();
-					var array = await [3, yearlevel]
-					socket.emit('account-detail-change', array);
-				});	
-			break;
-			case 4:
-				var accountypesource = firebase.database().ref('Users/'+data[1][12]+'/account-type');
+			// 	yearlevelsource.on('value', async function(snapshot) { 
+			// 		var yearlevel = await snapshot.val();
+			// 		var array = await [3, yearlevel]
+			// 		socket.emit('account-detail-change', array);
+			// 	});	
+			// break;
+			// case 4:
+			// 	var accountypesource = firebase.database().ref('Users/'+data[1][12]+'/account-type');
 		
-				accountypesource.on('value', async function(snapshot) { 
-					var accounttype = await snapshot.val();
-					var array = await [4, accounttype]
-					socket.emit('account-detail-change', array);
-				});	
-			break;
+			// 	accountypesource.on('value', async function(snapshot) { 
+			// 		var accounttype = await snapshot.val();
+			// 		var array = await [4, accounttype]
+			// 		socket.emit('account-detail-change', array);
+			// 	});	
+			// break;
 		}		
 	});
 
@@ -757,24 +688,24 @@ io.on('connection', function(socket) {
 					"last-name": data[1]
 				});
 			break;
-			case 2:
-				var schoolnamesource = firebase.database().ref('Users/'+data[2][12]);
-				schoolnamesource.update({
-					"school-name": data[1]
-				});
-			break;
-			case 3:
-				var yearlevelsource = firebase.database().ref('Users/'+data[2][12]);
-				yearlevelsource.update({
-					"year-level": data[1]
-				});
-			break;
-			case 4:
-				var accounttypesource = firebase.database().ref('Users/'+data[2][12]);
-				accounttypesource.update({
-					"account-type": data[1]
-				});
-			break;
+			// case 2:
+			// 	var schoolnamesource = firebase.database().ref('Users/'+data[2][12]);
+			// 	schoolnamesource.update({
+			// 		"school-name": data[1]
+			// 	});
+			// break;
+			// case 3:
+			// 	var yearlevelsource = firebase.database().ref('Users/'+data[2][12]);
+			// 	yearlevelsource.update({
+			// 		"year-level": data[1]
+			// 	});
+			// break;
+			// case 4:
+			// 	var accounttypesource = firebase.database().ref('Users/'+data[2][12]);
+			// 	accounttypesource.update({
+			// 		"account-type": data[1]
+			// 	});
+			// break;
 		}
 		return 0;
 	});
@@ -811,50 +742,48 @@ io.on('connection', function(socket) {
 
 	socket.on('resetpassword', function(data) {
 		if (data[0] == data[1]) {
-			console.log("password passed first phase.")
 			var str = data[0];
 			for (var i = 0, len = str.length, count=0, ch; i < len; ++i) {
 				ch = str.charAt(i);
 				if(ch >= 'A' && ch <= 'Z') ++count;
 			}
 			if (count >= 1) {
-				console.log("password passed second phase.")
-				if (data[0].length > 6) {
-					console.log("password passed third phase.")
-					if (/[^a-zA-Z]/.test(data[0])) {
-						var value = 'password successfully changed.'
-						var userpasswordsource = firebase.database().ref('Users/'+data[2][12]);
-						userpasswordsource.update({
-							"userpassword": data[0]
-						});
-						socket.emit('password-success', value)
-					} else {
-						var error = 'Password does not contain numbers'
-						socket.emit('password-error', error);
-					}
+			if (data[0].length > 6) {
+				if (/[^a-zA-Z]/.test(data[0])) {
+					var userpasswordsource = firebase.database().ref('Users/'+data[2][12]+'/userpassword');
+					userpasswordsource.once('value', async function(snapshot) {
+						if (data[0] != snapshot.val()) {
+							var userpasswordsourceval = firebase.database().ref('Users/'+data[2][12]);
+							userpasswordsourceval.update({
+								"userpassword": data[0]
+							});
+							socket.emit('password-success', "password created successfully.");
+						} else {
+							var error ="password is the same.";
+							socket.emit('password-error', error);
+						}
+					});	
 				} else {
-					var error = "password doesn't have enough characters."
-					socket.emit('password-error', error);
+					var error = 'Password does not contain numbers'
+					return socket.emit('password-error', error);
 				}
 			} else {
+				var error = "password doesn't have enough characters."
+				return socket.emit('password-error', error);
+			}
+			} else {
 				var error = "password does not have a capital letter"
-				socket.emit('password-error', error);
+				return socket.emit('password-error', error);
 			}
 		} else {
 			var error = "password do not match."
-			socket.emit('password-error', error);
+			return socket.emit('password-error', error);	
 		}
 	})
 
 	socket.on('signout', function(data) {
 		databaseurl = 'error';
 		socket.emit('signout', 'value');
-		// firebase.auth().signOut().then(() => {
-		// 	databaseurl = 'error';
-
-		// }).catch((error) => {
-		//   // An error happened.
-		// });
 	});
 
 

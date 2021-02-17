@@ -42,11 +42,9 @@ if (currentuser != null) {
 
 }
 
-var accept;
-socket.on('signupdata', async function(data) {
+socket.once('signupdata', async function(data) {
 	switch (data[0]) {
 		case 1: //successfully created user
-		    accept = await 1;
 			console.log("running good")
 			console.log("user has been created.")
 			var p1 = document.createElement('p');
@@ -57,7 +55,13 @@ socket.on('signupdata', async function(data) {
 	  
 			p1.appendChild(b1);
 			errorplacementsignup.appendChild(p1)
-			console.log(data[1]);
+
+			const el = document.createElement('textarea');
+			el.value = "email: "+data[1]+" | password: "+data[2];
+			document.body.appendChild(el);
+			el.select();
+			document.execCommand('copy');
+			document.body.removeChild(el);			
 
 			inputFirstNamesign.value = '';
 			inputLastNamesign.value = '';
@@ -71,7 +75,6 @@ socket.on('signupdata', async function(data) {
 		break;
 
 		case 0: //failed created user
-		if (accept != 1) {
 			console.log("running failed")
 			errorplacementsignup.innerHTML = '';
 			var p1 = document.createElement('p');
@@ -82,7 +85,6 @@ socket.on('signupdata', async function(data) {
 	  
 			p1.appendChild(b1);
 			errorplacementsignup.appendChild(p1)
-		}
 		break;
 	}
 });
@@ -102,7 +104,6 @@ function accounttypechoose(value) {
 }
 
 function signup() {
-	accept = 0;
 	var data = [
 		accountTypesign.innerHTML,
 		inputFirstNamesign.value,
@@ -113,8 +114,16 @@ function signup() {
 		inputPasswordsign.value
 	]
 
-	if (data[0] == 'Account Type' || data[1] == ' ' || data[2] == ' ' || data[3] == ' ' || data[4] == ' ' || data[5] == ' ' || data[6] == ' ') {
-		console.log("Empty boxes.")
+	if (data[0] == 'Account Type' || data[1] == '' || data[2] == '' || data[3] == '' || data[4] == '' || data[5] == '' || data[6] == '') {
+		errorplacementsignup.innerHTML = '';
+		var p1 = document.createElement('p');
+		var b1 = document.createElement('b');
+		
+		p1.style = "color: red; font-size: 13px; margin-top: 10px;";
+		b1.innerHTML = "Your left some empty spaces.";
+  
+		p1.appendChild(b1);
+		errorplacementsignup.appendChild(p1)
 	} else {
 		console.log("processing sign up form.")
 		socket.emit('signupdata', data)	
@@ -123,6 +132,15 @@ function signup() {
 	event.preventDefault()
 }
 
+function generatepass() {
+	socket.emit('generatepass', 'value');
+}
+
+socket.on('generatepass', async function(data) {
+	inputPasswordsign = document.getElementById("inputPasswordsign");
+	console.log(data);
+	inputPasswordsign.value = data;
+});
 
 function signupredirect() {
 	window.location.href = '/signup';
